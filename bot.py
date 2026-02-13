@@ -16,15 +16,23 @@ async def start(message: Message):
 
 @dp.message()
 async def handle_message(message: Message):
-    question = message.text
+    question = message.text.lower()
 
     faq_answer = find_faq(question)
 
     if faq_answer:
         await message.answer(faq_answer)
-    else:
-        ai_response = ask_ai(question)
-        await message.answer(ai_response)
+        return
+
+    if "аудитори" in question or "кабинет" in question or "корпус" in question:
+        await message.answer(
+            "Информация об этой аудитории отсутствует в базе данных. "
+            "Пожалуйста, уточните данные у администрации."
+        )
+        return
+    
+    ai_answer = ask_ai(question)
+    await message.answer(ai_answer)
 
 async def main():
     await dp.start_polling(bot)
